@@ -50,3 +50,58 @@ export type SetFormAction = {
  */
 export type Action = InputChangeAction | SetFormAction;
 //endof formhook types
+
+/**
+ * @name: IncomeReport
+ * @description - Type for addIncome() hook object
+ */
+export type IncomeReport = {
+  totalAmount: number;
+  dateOfTransaction?: Date;
+  category: string;
+  cogs: number;
+  grossProfit?: number;
+  taxAmount?: number;
+  processingFees: number;
+  netProfit?: number;
+  comment?: string;
+};
+
+/**
+ * @name: ExpenseReport
+ * @description - Type for addExpnse() hook object
+ */
+export type ExpenseReport = {
+  initialAmount: number;
+  amountOwed?: number;
+  lastUpdateDate?: Date;
+  totalDeduction?: number;
+  startDate?: Date;
+  category: string;
+  taxAmount?: number;
+  comment: string;
+};
+
+/**
+ * @name - Transactions
+ * @description - All Transactions for each added income or expense report
+ */
+
+export type Transactions = {
+  type: "income" | "expense";
+  _id?: number;
+  totalAmount?: number;
+  dateOfTransaction?: Date;
+  cogs?: number;
+  grossProfit?: number;
+  processingFees: number;
+  netProfit?: number;
+  initialAmount: number;
+  amountOwed?: number;
+  lastUpdateDate?: Date;
+  totalDeduction?: number;
+  startDate?: Date;
+  category: string;
+  taxAmount?: number;
+  comment?: string;
+};

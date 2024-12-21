@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 import Divider, { dividerClasses } from "@mui/material/Divider";
 import { listClasses } from "@mui/material/List";
 import ListItemIcon, { listItemIconClasses } from "@mui/material/ListItemIcon";
@@ -10,6 +11,8 @@ import MuiMenuItem from "@mui/material/MenuItem";
 import { paperClasses } from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 
+import MenuButton from "./MenuButton";
+
 const MenuItem = styled(MuiMenuItem)({
   margin: "2px 0",
 });
@@ -17,14 +20,21 @@ const MenuItem = styled(MuiMenuItem)({
 export default function OptionsMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  //   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-  //     setAnchorEl(event.currentTarget);
-  //   };
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
   const handleClose = () => {
     setAnchorEl(null);
   };
   return (
     <React.Fragment>
+      <MenuButton
+        aria-label="Open menu"
+        onClick={handleClick}
+        sx={{ borderColor: "transparent" }}
+      >
+        <MoreVertRoundedIcon />
+      </MenuButton>
       <Menu
         anchorEl={anchorEl}
         id="menu"

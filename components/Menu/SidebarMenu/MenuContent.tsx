@@ -1,4 +1,6 @@
-import * as React from "react";
+import React, { useState } from "react";
+
+import Link from "next/link";
 
 import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded";
 import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
@@ -15,36 +17,70 @@ import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 
 const mainListItems = [
-  { text: "Home", icon: <HomeRoundedIcon /> },
-  { text: "Analytics", icon: <AnalyticsRoundedIcon /> },
-  { text: "Clients", icon: <PeopleRoundedIcon /> },
-  { text: "Tasks", icon: <AssignmentRoundedIcon /> },
+  { text: "Home", icon: <HomeRoundedIcon />, link: "/" },
+  {
+    text: "Income/Expenses",
+    icon: <AnalyticsRoundedIcon />,
+    link: "/transactions",
+  },
+  { text: "Categories", icon: <AnalyticsRoundedIcon />, link: "/add-category" },
+  { text: "Clients", icon: <PeopleRoundedIcon />, link: "/customers" },
+  { text: "Tasks", icon: <AssignmentRoundedIcon />, link: "/Todos" },
 ];
 
 const secondaryListItems = [
-  { text: "Settings", icon: <SettingsRoundedIcon /> },
-  { text: "About", icon: <InfoRoundedIcon /> },
-  { text: "Feedback", icon: <HelpRoundedIcon /> },
+  { text: "Settings", icon: <SettingsRoundedIcon />, link: "/settings" },
+  { text: "About", icon: <InfoRoundedIcon />, link: "/about" },
+  { text: "Feedback", icon: <HelpRoundedIcon />, link: "/feedback" },
 ];
 
 export default function MenuContent() {
+  const [selected, setSelected] = useState<number | null>(0);
+  const [secondSelect, setSecondSelect] = useState<number | null>(null);
+
+  const handleSelected = (i: number) => {
+    if (secondSelect !== null) {
+      setSecondSelect(null);
+    }
+    setSelected(i);
+  };
+
+  const handleSecondSelect = (i: number) => {
+    if (selected !== null) {
+      setSelected(null);
+    }
+    setSecondSelect(i);
+  };
+
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
       <List dense>
         {mainListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton selected={index === 0}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
+          <Link
+            key={index}
+            href={item?.link ? item?.link : "#"}
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                onClick={() => handleSelected(index)}
+                selected={selected === index}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
 
       <List dense>
         {secondaryListItems.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: "block" }}>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => handleSecondSelect(index)}
+              selected={secondSelect === index}
+            >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>

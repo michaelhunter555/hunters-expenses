@@ -1,5 +1,22 @@
 import type { AppProps } from "next/app";
 
+import AppLayout from "@/components/Shared/AppLayout/AppLayout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppLayout>
+        <Component {...pageProps} />
+      </AppLayout>
+    </QueryClientProvider>
+  );
 }

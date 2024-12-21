@@ -1,17 +1,7 @@
-import Head from "next/head";
+import * as React from "react";
 
-import SideMenu from "@/components/Menu/SidebarMenu/SidebarMenu";
+import MainGrid from "@/components/MainGrid/MainGrid";
 
-export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Hunters Expense Tracker</title>
-        <meta name="description" content="Hunter's Profit-Loss Expensidor" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <SideMenu />
-    </>
-  );
+export default function Dashboard() {
+  return <MainGrid />;
 }

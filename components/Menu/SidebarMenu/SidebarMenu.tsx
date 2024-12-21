@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import Image from "next/image";
+
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -38,10 +40,13 @@ export default function SideMenu() {
       <Box
         sx={{
           display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           mt: "calc(var(--template-frame-height, 0px) + 4px)",
           p: 1.5,
         }}
       >
+        <Image src="/logohhs.jpeg" width={110} height={50} alt="hhs-logo" />
         <Typography color="text.secondary" variant="subtitle2">
           Hunter Expenses
         </Typography>
@@ -70,10 +75,10 @@ export default function SideMenu() {
             variant="body2"
             sx={{ fontWeight: 500, lineHeight: "16px" }}
           >
-            Riley Carter
+            Marc Hunter
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            riley@email.com
+            Marc@huntershomectr.com
           </Typography>
         </Box>
         <OptionsMenu />
