@@ -17,15 +17,15 @@ import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 
 const mainListItems = [
-  { text: "Home", icon: <HomeRoundedIcon />, link: "/" },
+  { text: "Applications", icon: <HomeRoundedIcon />, link: "/" },
   {
-    text: "Income/Expenses",
+    text: "Messages",
     icon: <AnalyticsRoundedIcon />,
-    link: "/transactions",
+    link: "/chats",
   },
-  { text: "Categories", icon: <AnalyticsRoundedIcon />, link: "/add-category" },
-  { text: "Clients", icon: <PeopleRoundedIcon />, link: "/customers" },
-  { text: "Tasks", icon: <AssignmentRoundedIcon />, link: "/Todos" },
+  { text: "Disputes", icon: <AnalyticsRoundedIcon />, link: "/add-category" },
+  { text: "Bookings", icon: <PeopleRoundedIcon />, link: "/customers" },
+  { text: "Users", icon: <AssignmentRoundedIcon />, link: "/Todos" },
 ];
 
 const secondaryListItems = [

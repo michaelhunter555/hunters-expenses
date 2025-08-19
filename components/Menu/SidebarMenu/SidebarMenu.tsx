@@ -75,10 +75,10 @@ export default function SideMenu() {
             variant="body2"
             sx={{ fontWeight: 500, lineHeight: "16px" }}
           >
-            Marc Hunter
+            Admin Support
           </Typography>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            Marc@huntershomectr.com
+            Support@barberApp.io
           </Typography>
         </Box>
         <OptionsMenu />

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+"use client";
 
-import { useTransaction } from "@/hooks/useTransaction";
-import { Transactions } from "@/types";
+import React, { useEffect, useState } from "react";
 import {
   Pagination,
   Stack,
@@ -14,83 +13,93 @@ import {
   Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { useApi } from "@/hooks/useHttp";
 
-const TransactionsTable = () => {
-  const { getTransactions } = useTransaction();
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(5);
+export interface IJoinAgreements {
+  _id: string;
+  email: string;
+  name: string;
+  date: string;
+  location: string;
+  isLicensed: boolean;
+  termsApproved: boolean;
+}
+
+const ApplicationsTable = () => {
+  const { request } = useApi();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
 
-  const { data: transactions, isLoading: transactionsLoading } = useQuery({
-    queryKey: ["transactions", page, limit],
-    queryFn: () => getTransactions(page, limit),
-    staleTime: 2 * 60 * 60 * 1000,
+  /** Wrap your backend call */
+  const getUserApplications = async (page: number, limit: number) => {
+    const res = await request(
+      `/admin/get-applications?page=${page}&limit=${limit}&order=1`
+    );
+    return res;
+  };
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["applications", page, limit],
+    queryFn: () => getUserApplications(page, limit),
+    staleTime: 5 * 60 * 1000,
   });
 
-  console.log("TransationArr: ", transactions?.transactions?.length);
-
   useEffect(() => {
-    if (
-      transactions?.totalTransactions &&
-      totalPages !== transactions?.totalTransactions
-    ) {
-      setTotalPages(transactions?.totalTransactions);
+    if (data?.totalPages) {
+      setTotalPages(data.totalPages);
     }
-  }, [transactions?.totalTransactions, totalPages]);
+  }, [data?.totalPages]);
 
-  const handlePageChange = (val: number) => {
-    setPage(val);
+  const handlePageChange = (_event: any, value: number) => {
+    setPage(value);
   };
 
   return (
     <>
-      {transactions?.transactions.length === 0 && !transactionsLoading && (
-        <Stack direction="column">
-          <Typography variant="h3" color="text.secondary">
-            You don't have any transactions yet.
-          </Typography>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            Add a transaction and a table will populate your data.
+      {data?.applications?.length === 0 && !isLoading && (
+        <Stack>
+          <Typography variant="h5" color="text.secondary">
+            No Applications yet.
           </Typography>
         </Stack>
       )}
-      {transactions?.transactions &&
-        !transactionsLoading &&
-        transactions?.transactions?.length > 0 && (
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Total Amount</TableCell>
-                  <TableCell>date</TableCell>
+
+      {data?.applications?.length > 0 && (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Licensed</TableCell>
+                <TableCell>Agreed Terms</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data?.applications.map((app: IJoinAgreements) => (
+                <TableRow key={app._id}>
+                  <TableCell>{app.name}</TableCell>
+                  <TableCell>{app.email}</TableCell>
+                  <TableCell>{String(app.date).split("T")[0]}</TableCell>
+                  <TableCell>{app.location}</TableCell>
+                  <TableCell>{app.isLicensed ? "✅" : "❌"}</TableCell>
+                  <TableCell>{app.termsApproved ? "✅" : "❌"}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {transactions?.transactions?.map(
-                  (transaction: Transactions, i: number) => (
-                    <TableRow key={transactions?._id}>
-                      <TableCell>{transaction?.type}</TableCell>
-                      <TableCell>{transaction?.category}</TableCell>
-                      <TableCell>{transaction?.totalAmount}</TableCell>
-                      <TableCell>
-                        {String(transaction?.dateOfTransaction)}
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
-            <Pagination
-              page={transactions?.page}
-              count={totalPages}
-              onChange={(event, page) => handlePageChange(page)}
-            />
-          </TableContainer>
-        )}
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            page={page}
+            count={totalPages}
+            onChange={handlePageChange}
+          />
+        </TableContainer>
+      )}
     </>
   );
 };
 
-export default TransactionsTable;
+export default ApplicationsTable;

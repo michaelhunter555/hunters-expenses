@@ -82,26 +82,33 @@ export type ExpenseReport = {
   comment: string;
 };
 
-/**
- * @name - Transactions
- * @description - All Transactions for each added income or expense report
- */
 
-export type Transactions = {
-  type: "income" | "expense";
-  _id?: number;
-  totalAmount?: number;
-  dateOfTransaction?: Date;
-  cogs?: number;
-  grossProfit?: number;
-  processingFees: number;
-  netProfit?: number;
-  initialAmount: number;
-  amountOwed?: number;
-  lastUpdateDate?: Date;
-  totalDeduction?: number;
-  startDate?: Date;
-  category: string;
-  taxAmount?: number;
-  comment?: string;
+interface IParticipantInfo {
+  id: string;
+  name: string;
+  image: string;
+  role: 'user' | 'barber' | 'admin';
+}
+
+export interface IChat {
+  _id?: string,
+  participants: string[]; // 2 user ids
+  participantInfo: IParticipantInfo[]; // 2 objects
+  lastMessage?: string;
+  lastMessageTime?: Date;
+  bookingId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  chatIsComplete?: boolean;
+
+}
+
+export interface IMessage {
+  _id?: string,
+  chatId: string,
+  senderId: string,
+  text: string,
+  read: boolean,
+  createdAt?: Date,
+  updatedAt?: Date,
 };
