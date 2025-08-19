@@ -23,9 +23,9 @@ const mainListItems = [
     icon: <AnalyticsRoundedIcon />,
     link: "/chats",
   },
-  { text: "Disputes", icon: <AnalyticsRoundedIcon />, link: "/add-category" },
-  { text: "Bookings", icon: <PeopleRoundedIcon />, link: "/customers" },
-  { text: "Users", icon: <AssignmentRoundedIcon />, link: "/Todos" },
+  { text: "Disputes", icon: <AnalyticsRoundedIcon />, link: "/disputes" },
+  { text: "Bookings", icon: <PeopleRoundedIcon />, link: "/bookings" },
+  { text: "Users", icon: <AssignmentRoundedIcon />, link: "/users" },
 ];
 
 const secondaryListItems = [

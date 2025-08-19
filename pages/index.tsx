@@ -6,7 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 export default function Dashboard() {
   return (
   <ProtectedRoute>
-    <MainGrid />;
+    <MainGrid />
   </ProtectedRoute>
   )
 }

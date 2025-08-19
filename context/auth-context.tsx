@@ -10,6 +10,8 @@ interface IAuth {
     handleLogin: (email: string, password: string) => void;
     handleLogout: () => void;
     jwtToken: string | null;
+    hydrated: boolean;
+    updateUser: (user: any) => void;
 }
 
 const authContext: IAuth = {
@@ -18,7 +20,9 @@ const authContext: IAuth = {
     isLoggedIn: false,
     handleLogin: (email: string, password: string) => {},
     handleLogout: () => {},
-    jwtToken: null
+    jwtToken: null,
+    hydrated: false,
+    updateUser: (user: any) => {}
 }
 
 const AuthContext = createContext<IAuth>(authContext);
@@ -32,22 +36,33 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
         isLoggedIn: false,
         jwtTokent: null
     })
+    const [hydrated, setHydrated] = useState<boolean>(false);
 
+    // Hydrate auth state from localStorage on the client
     useEffect(() => {
-        const token = localStorage.getItem("@token");
-        if(!token) handleLogout();
-        const userData = JSON.parse(String(token));
-        if(userData?.expiration && userData?.user && new Date(userData?.expiration) > new Date()) {
-            setUser({
-                name: userData.user.name,
-                id: userData.user._id,
-                isLoggedIn: true,
-                jwtToken: userData.user.jwtToken,
-            })
-        } else {
-            handleLogout()
+        try {
+            const storage = typeof window !== 'undefined' ? localStorage.getItem("@token") : null;
+            if (storage) {
+                const parsed = JSON.parse(storage as string);
+                const isValid = parsed?.user?.isLoggedIn && parsed?.expiration && new Date(parsed?.expiration) > new Date();
+                if (isValid) {
+                    setUser({
+                        name: parsed.user.name ?? "",
+                        id: parsed.user.id ?? "",
+                        isLoggedIn: true,
+                        jwtToken: parsed.user.jwtToken ?? null,
+                    });
+                } else {
+                    // Expired or invalid token
+                    localStorage.removeItem("@token");
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setHydrated(true);
         }
-    }, [])
+    }, []);
 
     const login = useMutation({
         mutationKey: ['login-admin'],
@@ -66,7 +81,7 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
         if(password && email) {
             login.mutate({ email, password}, {
                 onSuccess: (data) => {
-                    console.log(data)
+                    console.log("userloggedin:",data)
                     const newUser = {
                         name: data.name,
                         id: data.id,
@@ -101,8 +116,12 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
             isLoggedIn: false,
             jwtToken: null,
         })
+        router.push("/login")
     }
 
+    const updateUser = (user: {[key: string]: keyof typeof user}) => {
+        setUser((prev: any) => ({ ...user}))
+    }
 
     return (
         <AuthContext.Provider value={{
@@ -112,6 +131,8 @@ export const AuthProvider = ({ children }: {children: React.ReactNode}) => {
             handleLogin: handleLogin,
             handleLogout: handleLogout,
             jwtToken: user.jwtToken,
+            hydrated,
+            updateUser,
         }}>
             {children}
         </AuthContext.Provider>

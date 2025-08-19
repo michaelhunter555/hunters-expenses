@@ -26,7 +26,7 @@ const Chats = () => {
   const { data: chatMessages, isLoading: isLoadingMessage } = useQuery({
     queryKey: ['chat', chatId],
     queryFn: () => getChatMessages(chatId),
-    enabled: !!chatId
+    enabled: !!chatId && auth.hydrated && !!auth.jwtToken
   })
 
   return (

@@ -12,22 +12,26 @@ import {
   Stack,
 } from "@mui/material";
 import { useApi } from "@/hooks/useHttp";
+import useAuth from "@/context/auth-context";
 
 export default function ApplicationDetailsPage() {
   const router = useRouter();
+  const user = useAuth()
 
   const { id } = router.query;
   const { request } = useApi();
 
-  console.log("id:", id)
-
   const { data, isLoading } = useQuery({
     queryKey: ["applicationDetail", id],
-    queryFn: () => request(`admin/get-application-by-id?userId=${id}`),
-    enabled: !!id,
+    queryFn: () => request(
+        `admin/get-application-by-id?userId=${id}`,
+        'GET',
+        null,
+        { Authorization: `Bearer ${user.jwtToken}`}
+    ),
+    enabled: !!id && user.hydrated && !!user.jwtToken,
   });
 
-  console.log("application",data)
 
   if (isLoading) {
     return (

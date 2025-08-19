@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -41,7 +42,7 @@ const Messages = ({ onSelect }: IMessages) => {
   const { data: chats, isLoading } = useQuery({
     queryKey: ["get-all-chats", user?.id, page, limit],
     queryFn: () => getChats(user.id, page, limit, -1),
-    enabled: Boolean(user?.id),
+    enabled: !!user?.id && user.hydrated && !!user.jwtToken,
   });
 
   console.log("Chats", chats)
@@ -86,7 +87,8 @@ const Messages = ({ onSelect }: IMessages) => {
       {isLoading ? (
         <Typography>Loading…</Typography>
       ) : chats?.chats?.length ? (
-        chats.chats.map((c: any) => {
+        <>
+        {chats.chats.map((c: any) => {
           const participant = c.participantInfo.find(
             (p: any) => p.role === "admin"
           );
@@ -123,7 +125,17 @@ const Messages = ({ onSelect }: IMessages) => {
               <Divider />
             </Box>
           );
-        })
+        })}
+        <Box display="flex" justifyContent="flex-end" mt={2}>
+          <Pagination
+            page={page}
+            count={Math.max(1, Math.ceil((chats?.totalChats || 0) / limit))}
+            onChange={(_e, value) => setPage(value)}
+            shape="rounded"
+            color="primary"
+          />
+        </Box>
+        </>
       ) : (
         <Typography sx={{ opacity: 0.7, textAlign: "center" }}>No Chats Yet.</Typography>
       )}

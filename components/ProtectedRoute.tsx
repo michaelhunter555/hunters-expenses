@@ -1,23 +1,20 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import useAuth from "@/context/auth-context";
 import { Box, CircularProgress } from "@mui/material";
 import { useRouter } from "next/router";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
-  const [checking, setChecking] = useState(true);
+  const { isLoggedIn, hydrated, jwtToken } = useAuth();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.push("/login");
-    } else {
-      setChecking(false);
+    if (hydrated && !isLoggedIn) {
+      router.replace('/login');
     }
-  }, [isLoggedIn]);
+  }, [hydrated, isLoggedIn, router])
 
-  if (checking) {
+  if (!hydrated) {
     // Show a spinner or even your app layout’s shell
     return (
       <Box
@@ -29,6 +26,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         <CircularProgress />
       </Box>
     );
+  }
+  if (!jwtToken) {
+    return null;
   }
 
   return <>{children}</>;

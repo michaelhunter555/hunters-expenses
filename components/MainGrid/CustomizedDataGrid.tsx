@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Button, Chip } from "@mui/material";
+import { Button, Chip, Pagination, Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "@/hooks/useHttp";
 import Link from "next/link";
+import useAuth from "@/context/auth-context";
 
 /** Column definitions */
 const columns: GridColDef[] = [
@@ -58,13 +59,17 @@ const columns: GridColDef[] = [
 ];
 
 export default function ApplicationsDataGrid() {
+  const auth = useAuth();
   const { request } = useApi();
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
   const fetchApplications = async (page: number, limit: number) => {
     const data = await request(
-      `admin/get-applications?page=${page}&limit=${limit}&order=1`
+      `admin/get-applications?page=${page}&limit=${limit}&order=1`,
+      'GET',
+      null,
+      {Authorization: `Bearer ${auth.jwtToken}`}
     );
     return data;
   };
@@ -73,6 +78,7 @@ export default function ApplicationsDataGrid() {
     queryKey: ["applications", page, limit],
     queryFn: () => fetchApplications(page, limit),
     placeholderData: (prev) => prev,
+    enabled: auth.hydrated && !!auth.jwtToken,
   });
 
   return (
@@ -88,11 +94,20 @@ export default function ApplicationsDataGrid() {
     setPage(model.page + 1);
   }}
   rowCount={data?.totalApplications || 0}
+  hideFooterPagination
   autoHeight
   density="compact"
   checkboxSelection
 />
-
+      <Stack direction="row" justifyContent="flex-end" mt={2}>
+        <Pagination
+          page={page}
+          count={Math.max(1, Math.ceil((data?.totalApplications || 0) / limit))}
+          onChange={(_e, value) => setPage(value)}
+          shape="rounded"
+          color="primary"
+        />
+      </Stack>
     </div>
   );
 }

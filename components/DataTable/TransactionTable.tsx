@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import useAuth from "@/context/auth-context";
 import { useApi } from "@/hooks/useHttp";
 
 export interface IJoinAgreements {
@@ -27,6 +28,7 @@ export interface IJoinAgreements {
 
 const ApplicationsTable = () => {
   const { request } = useApi();
+  const auth = useAuth();
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
@@ -43,6 +45,7 @@ const ApplicationsTable = () => {
     queryKey: ["applications", page, limit],
     queryFn: () => getUserApplications(page, limit),
     staleTime: 5 * 60 * 1000,
+    enabled: auth.hydrated && !!auth.jwtToken,
   });
 
   useEffect(() => {

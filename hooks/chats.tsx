@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { useApi } from './useHttp';
 import { IChat, IMessage } from '@/types'
+import useAuth from '@/context/auth-context';
 
 export const useChat = () => {
     const { request } = useApi();
-    const storage = localStorage.getItem("@token");
-    const user = JSON.parse(String(storage));
+    const user = useAuth();
+    console.log("user chat user:", user)
 
     const createSupportChat = useCallback(async ( senderId: string ) => {
         try {
@@ -14,7 +15,7 @@ export const useChat = () => {
                 JSON.stringify({ senderId }),
                 {
                     "Content-Type":"application/json",
-                    Authorization: `bearer ${user.user.jwtToken}`
+                    Authorization: `Bearer ${user.jwtToken}`
                 }
             )
             const data = await res.json();
@@ -34,12 +35,13 @@ export const useChat = () => {
     
     const getChats = useCallback(async (adminId: string, page: number, limit: number, order:number): Promise<GetChatsPromiseResult | void> => {
         try {
+            console.log("user chat user:", user.jwtToken)
             const response = await request(
                 `chat/get-chats?userId=${adminId}&page=${page}&limit=${limit}&order=${order}`,
                 'GET',
                 null,
                 {
-                    Authorization: `bearer ${user.user.jwtToken}`
+                    Authorization: `Bearer ${user.jwtToken}`
                 }
              );
             return {
@@ -69,7 +71,7 @@ export const useChat = () => {
                 'GET',
                 null,
                 {
-                    Authorization: `bearer ${user.user.jwtToken}`
+                    Authorization: `Bearer ${user.jwtToken}`
                 }
             );
             return {
@@ -91,7 +93,7 @@ export const useChat = () => {
                 JSON.stringify({ chatId, senderId, text }),
                 {
                     "Content-Type":"application/json",
-                    Authorization: `bearer ${user.user.jwtToken}`
+                    Authorization: `Bearer ${user.jwtToken}`
                 }
             )
             return res;
@@ -108,7 +110,7 @@ export const useChat = () => {
                 JSON.stringify({ chatIsComplete: true, chatId }),
                 {
                     "Content-Type":"application/json",
-                    Authorization: `bearer ${user.user.jwtToken}`
+                    Authorization: `Bearer ${user.jwtToken}`
                 }
             )
             const data = await res.json();
